@@ -537,37 +537,7 @@ void CCollocation::Get_C0()
     C0z = C0z / Pnumber;
 }
 
-//void CCollocation::Get_diStance()
-//{
-//
-//    diStance.resize(Pnumber * (Pnumber - 1) / 2);
-//    int k = 0;
-//    //第i个点
-//    for (int i = 0; i < Pnumber; i++)
-//    {
-//        //第j个点
-//        for (int j = i + 1; j < Pnumber; j++)
-//        {
-//            //算出来毫无意义啊啊啊啊啊，又不是真的距离,也是有意义的，
-//
-//            double Sx = (XYZ[3 * i] - XYZ[3 * j]) * (XYZ[3 * i] - XYZ[3 * j]);
-//            double Sy = (XYZ[3 * i + 1] - XYZ[3 * j + 1]) * (XYZ[3 * i + 1] - XYZ[3 * j + 1]);
-//            double Sz = (XYZ[3 * i + 2] - XYZ[3 * j + 2]) * (XYZ[3 * i + 2] - XYZ[3 * j + 2]);
-//
-//            // cout << Sx << setw(20) << Sy << setw(20) << Sz << endl;
-//
-//             //把S换成千米级，公里
-//            diStance(k)= (Sx + Sy + Sz) / 1000000.0;
-//         
-//            k++;
-//        }
-//    }
-//
-//    //cout << diStance << endl << endl << endl;
-//
-//
-//
-//}
+
 
 
 /*计算k
@@ -821,6 +791,29 @@ void CCollocation::Get_Lv()
     //cout << endl << Lv << endl;
 }
 
+void CCollocation::Get_Ls2()
+{
+    Ls2.resize(unusedPnumber * 3);
+
+    MatrixXd A2(unusedPnumber * 3, 3);
+
+    for (int i = 0; i < unusedPnumber; i++)
+    {
+        
+
+            //分块初始化赋值
+        A2.block(3 * i, 0, 3, 3)
+            << 0.0, unusedXYZ[3 * i + 2], -unusedXYZ[3 * i + 1],
+            -unusedXYZ[3 * i + 2], 0.0, unusedXYZ[3 * i],
+            unusedXYZ[3 * i + 1], -unusedXYZ[3 * i], 0.0;
+    }
+
+    Ls2 = A2 * detax + S2_Adjust;
+    cout << "------------Ls2-------------" << endl;
+    cout << Ls2 << endl;
+
+}
+
 void CCollocation::PrintResult(char* resultfile)
 {
     ofstream outfile(resultfile, ios::out);
@@ -872,6 +865,18 @@ void CCollocation::PrintResult(char* resultfile)
         outfile << " " << setw(20) << " X " << setw(20) << S2_Adjust(3 * i) * 1000.0 << endl;
         outfile << unusedPname[i] << setw(15) << " Y " << setw(20) << S2_Adjust(3 * i + 1) * 1000.0 << endl;
         outfile << " " << setw(20) << " Z " << setw(20) << S2_Adjust(3 * i + 2) * 1000.0 << endl;
+        outfile << "-----------------------------------------------" << endl;
+
+    }
+    outfile << "\n\n--------------------未测点完全信号估值(未测点位移速度)----------------------\n";
+
+    outfile << "点名       方向        未测点完全信号估值------(单位:mm/year) \n";
+
+    for (int i = 0; i < unusedPnumber; i++)
+    {
+        outfile << " " << setw(20) << " X " << setw(20) << Ls2(3 * i) * 1000.0 << endl;
+        outfile << unusedPname[i] << setw(15) << " Y " << setw(20) << Ls2(3 * i + 1) * 1000.0 << endl;
+        outfile << " " << setw(20) << " Z " << setw(20) << Ls2(3 * i + 2) * 1000.0 << endl;
         outfile << "-----------------------------------------------" << endl;
 
     }

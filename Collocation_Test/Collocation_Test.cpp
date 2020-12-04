@@ -32,6 +32,7 @@ int main()
     ccollocation.Get_QS1();
     ccollocation.Get_S1_Adjust();
     ccollocation.Get_Lv();
+    ccollocation.Get_Ls2();
 
     ccollocation.PrintResult("C:\\Butterflying\\grade_first\\adjust\\Collocation_Test\\result.txt");
     

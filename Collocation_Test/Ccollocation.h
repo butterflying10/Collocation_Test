@@ -66,7 +66,7 @@ public:
 	//计算平差后的detax，三个欧拉向量
 	void Get_detax();
 
-	//计算平差后的已测信号的  局部区域的形变
+	//计算平差后的已测信号的  局部区域的形变,并且还会计算未测信号的估值
 	void Get_S1_Adjust();
 
 	//计算平差后形变量，倾向参数+  局部区域的形变
@@ -74,6 +74,9 @@ public:
 
 	//计算未测信号估值
 	void Get_S2_Adjust();
+
+	//计算未测信号的完全信号
+	void Get_Ls2();
 
 
 	void PrintResult(char * resultfile);
@@ -150,6 +153,7 @@ private:
 	VectorXd S2_Adjust;//未测信号的估值，推估
 
 	VectorXd Lv;//平差后的形变量   倾向参数+局部区域形变
+	VectorXd Ls2;//未测点的完全信号
 
 
 
